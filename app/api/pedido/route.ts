@@ -9,6 +9,16 @@ export async function POST(request: Request) {
 
         delete body.id;
 
+        delete body.dataPedido;
+
+        const agora = new Date();
+
+        body.dataPedido = agora;
+        
+        if (body.total) {
+          body.total = parseFloat(body.total);
+        }
+
         if (!body) {
             return new NextResponse("Faltando informações", { status: 400 });
         }
