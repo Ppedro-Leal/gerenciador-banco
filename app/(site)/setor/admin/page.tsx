@@ -27,7 +27,7 @@ import { useEffect, useState } from "react";
 import FormCategoria from "@/components/forms/FormCategoria";
 import FormCliente from "@/components/forms/FormCliente";
 import FormEndereco from "@/components/forms/FormEndereco";
-import FormMetodoPagamento from "@/components/forms/FormMetodoPagamento";
+
 import FormProduto from "@/components/forms/FormProduto";
 import FormPedido from "@/components/forms/FormPedido";
 import FormProdutoPedido from "@/components/forms/FormProdutoPedido";
@@ -385,84 +385,6 @@ export default function Admin() {
                 </TableBody>
               </Table>
 
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* MÉTODO DE PAGAMENTO */}
-        <TabsContent value="metodoPagamento">
-          <div className="flex flex-row w-full">
-            <div className="flex flex-col space-y-4 border-r-2 border-slate-800 p-3 h-[calc(100vh-100px)] w-[360px]">
-              <div className="flex flex-row space-x-64">
-                <FormMetodoPagamento
-                  id={metodoPagamentoEdicao?.id}
-                  tipo={metodoPagamentoEdicao?.tipo}
-                  nomeTitular={metodoPagamentoEdicao?.nomeTitular}
-                  numero={metodoPagamentoEdicao?.numero}
-                  data_expiracao={metodoPagamentoEdicao?.data_expiracao}
-                  cliente_id={
-                    metodoPagamentoEdicao.cliente_id && {
-                      nome: metodoPagamentoEdicao.cliente_id.nome,
-                    }
-                  }
-                  crud={editarForm == "metodoPagamento" ? "UPD" : "CRT"}
-                  onclikCancela={(a : any) => eventClikForm(a)}
-                />
-              </div>
-            </div>
-
-            <div className="w-full p-3">
-            <Table className="w-full rounded-lg dark:bg-slate-900">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Tipo Pagamento</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Cliente</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {metodoPagamento &&
-                    metodoPagamento.map((s: any, index : any) => (
-                      <TableRow key={index}>
-                        <TableCell>{s.id}</TableCell>
-                        <TableCell>{s.nomeTitular}</TableCell>
-                        <TableCell>{s.tipo}</TableCell>
-                        <TableCell>{s.data_expiracao}</TableCell>
-                        <TableCell>{s.cliente_id}</TableCell>
-                        <TableCell className="flex flex-row space-x-3">
-                          <Pencil1Icon
-                            className=" w-10 h-6 cursor-pointer"
-                            onClick={() => EditarMetodoPagamento(s)}
-                          ></Pencil1Icon>
-                          <AlertDialog>
-                            <AlertDialogTrigger>
-                              <Cross2Icon className=" w-10 h-6 hover:text-red-600 cursor-pointer "></Cross2Icon>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Confirma a exclusão?
-                                </AlertDialogTitle>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancele</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => {
-                                    EditarMetodoPagamento(s);
-                                  }}
-                                >
-                                  Sim
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
             </div>
           </div>
         </TabsContent>
