@@ -61,43 +61,40 @@ export default function FormCliente({
     form.setValue("imagem", crud === "UPD" ? imagem : "");
   }, [form, crud, id, nome, email, telefone, senha, data_Nasc, genero, imagem]);
 
-  function onSubmit(data: Input) {
-    if (crud === "UPD") {
-      fetch("/api/cliente", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Erro na solicitação POST");
-          }
-        })
-        .catch((error) => {
-          console.error("Erro:", error);
-        });
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  async function onSubmit(data: Input) {
+    const formData = new FormData();
+
+    // Adicione os outros campos ao formData conforme necessário
+    formData.append("nome", data.nome || "");
+    formData.append("email", data.email || "");
+    formData.append("senha", data.senha || "");
+    formData.append("telefone", data.telefone || "");
+    formData.append("data_Nasc", data.data_Nasc || "");
+    formData.append("genero", data.genero || "");
+
+    // Adicione a imagem apenas se houver uma imagem selecionada
+    if (selectedImage) {
+      formData.append("imagem", selectedImage);
     }
 
-    if (crud === "CRT") {
-      fetch("/api/cliente", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw Error("Erro na solicitação POST");
-          }
-        })
-        .catch((error) => {
-          console.error("Erro:", error);
-        });
+    const requestOptions = {
+      method: crud === "UPD" ? "PUT" : "POST",
+      body: formData,
+    };
+
+    try {
+      const response = await fetch("/api/cliente", requestOptions);
+
+      if (!response.ok) {
+        throw new Error("Erro na solicitação POST");
+      }
+    } catch (error) {
+      console.error("Erro:", error);
     }
-  }
+  };
+
 
   return (
     <Card className="rounded-xl w-[330px] h-fit p-2 relative dark:bg-slate-900">
@@ -186,7 +183,11 @@ export default function FormCliente({
                         <Input
                           type="file"
                           accept=".jpg, .jpeg, .png"
-                          {...field}
+                          onChange={(e) => {
+                            const file: any = e.target.files?.[0];
+                            setSelectedImage(file);
+                            field.onChange(file);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

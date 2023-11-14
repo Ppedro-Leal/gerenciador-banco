@@ -5,7 +5,7 @@ export const ProdutoSchema = z.object({
   nome: z.string(),
   descricao: z.string().optional(),
   preco: z.string(),
-  imagem: z.string().optional(),
+  imagem: z.unknown().optional(),
   disponibilidade: z.boolean(),
   categoria_id: z.string(),
 });

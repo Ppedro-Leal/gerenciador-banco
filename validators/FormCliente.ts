@@ -8,7 +8,7 @@ export const ClienteSchema = z.object({
   senha: z.string(),
   data_Nasc: z.string().optional(),
   genero: z.string().optional(), 
-  imagem: z.string().optional(), 
+  imagem: z.unknown().optional(), 
 });
 
 

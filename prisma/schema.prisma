@@ -15,17 +15,31 @@ model Categoria {
 }
 
 model Produto {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  nome      String
-  descricao String?
-  preco     String
-  imagem    String?
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  nome           String
+  descricao      String?
+  preco          String
   disponibilidade Boolean
 
   categoria    Categoria @relation(fields: [categoria_id], references: [id])
   categoria_id String    @db.ObjectId
 
-  ProdutoPedido ProdutoPedido[]
+  imagem    Imagem[]
+
+  produtoPedidos ProdutoPedido[]
+}
+
+model Imagem {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  url    String
+  alt    String?
+
+
+  cliente Cliente?   @relation(fields: [cliente_id], references: [id])
+  cliente_id String? @db.ObjectId
+
+  produto Produto?   @relation(fields: [produto_id], references: [id])
+  produto_id String? @db.ObjectId
 }
 
 model Pedido {
@@ -49,7 +63,8 @@ model Cliente {
   senha     String
   data_Nasc String?
   genero    String?
-  imagem    String?
+
+  imagem    Imagem[]
 
   pedidos          Pedido[]
   enderecos        Endereco[]

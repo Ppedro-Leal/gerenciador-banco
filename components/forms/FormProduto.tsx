@@ -1,8 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
@@ -12,13 +25,17 @@ import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "../ui/command";
-
-
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "../ui/command";
 
 type Input = z.infer<typeof ProdutoSchema>;
 
-const value: any = []
+const value: any = [];
 
 export default function FormProduto({
   id,
@@ -54,51 +71,55 @@ export default function FormProduto({
     form.setValue("imagem", crud === "UPD" ? imagem : "");
     form.setValue("disponibilidade", crud === "UPD" ? disponibilidade : true);
     form.setValue("categoria_id", crud === "UPD" ? categoria_id : "");
-  }, [form, crud, id, nome, descricao, preco, imagem, disponibilidade, categoria_id]);
+  }, [
+    form,
+    crud,
+    id,
+    nome,
+    descricao,
+    preco,
+    imagem,
+    disponibilidade,
+    categoria_id,
+  ]);
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   function onSubmit(data: Input) {
-    if (crud === "UPD") {
-      fetch("/api/produto", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Erro na solicitação POST");
-          }
-        })
-        .catch((error) => {
-          console.error("Erro:", error);
-        });
+    const formData = new FormData();
+
+    // Adicione os outros campos ao formData conforme necessário
+    formData.append("nome", data.nome || "");
+    formData.append("descricao", data.descricao || "");
+    formData.append("preco", data.preco || "");
+    formData.append("disponibilidade", data.disponibilidade.toString());
+    formData.append("categoria_id", data.categoria_id || "");
+
+    // Adicione a imagem apenas se houver uma imagem selecionada
+    if (selectedImage) {
+      formData.append("imagem", selectedImage, selectedImage.name);
     }
 
-    if (crud === "CRT") {
-      fetch("/api/produto", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+    const requestOptions = {
+      method: crud === "UPD" ? "PUT" : "POST",
+      body: formData,
+    };
+
+    fetch("/api/produto", requestOptions)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro na solicitação POST");
+        }
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw Error("Erro na solicitação POST");
-          }
-        })
-        .catch((error) => {
-          console.error("Erro:", error);
-        });
-    }
+      .catch((error) => {
+        console.error("Erro:", error);
+      });
   }
 
-
   const [popoverOpen, setPopoverOpen] = useState(false);
-  
+
   const [categoria, setCategoria] = useState(value);
-  
+
   function getCategoria() {
     fetch("/api/categoria")
       .then((response) => {
@@ -118,10 +139,6 @@ export default function FormProduto({
   useEffect(() => {
     getCategoria();
   }, []);
-
-
-
-
 
   return (
     <Card className="rounded-xl w-[330px] h-fit p-2 relative dark:bg-slate-900">
@@ -170,7 +187,7 @@ export default function FormProduto({
                     </FormItem>
                   )}
                 />
-                 <FormField
+                <FormField
                   control={form.control}
                   name="imagem"
                   render={({ field }) => (
@@ -182,7 +199,11 @@ export default function FormProduto({
                         <Input
                           type="file"
                           accept=".jpg, .jpeg, .png"
-                          {...field}
+                          onChange={(e) => {
+                            const file:any = e.target.files?.[0];
+                            setSelectedImage(file);
+                            field.onChange(file);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -194,11 +215,13 @@ export default function FormProduto({
                   name="disponibilidade"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[12px] ">Disponibilidade</FormLabel>
+                      <FormLabel className="text-[12px] ">
+                        Disponibilidade
+                      </FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value ? 'true' : 'false'}
+                          defaultValue={field.value ? "true" : "false"}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Não" />
@@ -214,69 +237,73 @@ export default function FormProduto({
                   )}
                 />
                 <div className="py-3 flex flex-col space-y-3 w-full">
-                <FormField
-                  control={form.control}
-                  name="categoria_id"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Categoria</FormLabel>
-                      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-full justify-between",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value
-                                ? categoria.find(
-                                    (empresa: any) => empresa.id === field.value
-                                  )?.nome
-                                : "Selecione categoria"}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
-                          <Command className="pointer-events-auto">
-                            <CommandInput
-                              className="pointer-events-auto z-[999999999]"
-                              placeholder="Pesquise..."
-                            />
-                            <CommandEmpty>Nada encontrado.</CommandEmpty>
-                            <CommandGroup>
-                              {categoria.map((CL: any) => (
-                                <CommandItem
-                                  value={CL.nome}
-                                  key={CL.id}
-                                  onSelect={() => {
-                                    form.setValue("categoria_id", CL.id);
-                                    setPopoverOpen(false);
-                                  }}
-                                >
-                                  <CheckIcon
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      CL.nome === field.value
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    )}
-                                  />
-                                  {CL.nome}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="categoria_id"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Categoria</FormLabel>
+                        <Popover
+                          open={popoverOpen}
+                          onOpenChange={setPopoverOpen}
+                        >
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  "w-full justify-between",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value
+                                  ? categoria.find(
+                                      (empresa: any) =>
+                                        empresa.id === field.value
+                                    )?.nome
+                                  : "Selecione categoria"}
+                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full p-0">
+                            <Command className="pointer-events-auto">
+                              <CommandInput
+                                className="pointer-events-auto z-[999999999]"
+                                placeholder="Pesquise..."
+                              />
+                              <CommandEmpty>Nada encontrado.</CommandEmpty>
+                              <CommandGroup>
+                                {categoria.map((CL: any) => (
+                                  <CommandItem
+                                    value={CL.nome}
+                                    key={CL.id}
+                                    onSelect={() => {
+                                      form.setValue("categoria_id", CL.id);
+                                      setPopoverOpen(false);
+                                    }}
+                                  >
+                                    <CheckIcon
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        CL.nome === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {CL.nome}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
           </Form>
