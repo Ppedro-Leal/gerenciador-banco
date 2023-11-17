@@ -64,7 +64,6 @@ export default function FormProduto({
   });
 
   useEffect(() => {
-    console.log(categoria_id.nome);
     form.setValue("id", crud === "UPD" ? id : "");
     form.setValue("nome", crud === "UPD" ? nome : "");
     form.setValue("descricao", crud === "UPD" ? descricao : "");
