@@ -53,9 +53,9 @@ export default function FormProduto({
     nome: crud === "UPD" ? nome : "",
     descricao: crud === "UPD" ? descricao : "",
     preco: crud === "UPD" ? preco : "",
-    imagem: crud === "UPD" ? imagem : "",
+    imagem: crud === "UPD" ? imagem?.url : "",
     disponibilidade: crud === "UPD" ? disponibilidade : true,
-    categoria_id: categoria_id,
+    categoria_id: crud === "UPD" ? categoria_id.nome : "",
   };
 
   const form = useForm<Input>({
@@ -64,13 +64,14 @@ export default function FormProduto({
   });
 
   useEffect(() => {
+    console.log(categoria_id.nome);
     form.setValue("id", crud === "UPD" ? id : "");
     form.setValue("nome", crud === "UPD" ? nome : "");
     form.setValue("descricao", crud === "UPD" ? descricao : "");
     form.setValue("preco", crud === "UPD" ? preco : "");
-    form.setValue("imagem", crud === "UPD" ? imagem : "");
+    form.setValue("imagem", crud === "UPD" ? imagem?.url : "");
     form.setValue("disponibilidade", crud === "UPD" ? disponibilidade : true);
-    form.setValue("categoria_id", crud === "UPD" ? categoria_id : "");
+    form.setValue("categoria_id", crud === "UPD" ? categoria_id.nome : "");
   }, [
     form,
     crud,
@@ -237,73 +238,72 @@ export default function FormProduto({
                   )}
                 />
                 <div className="py-3 flex flex-col space-y-3 w-full">
-                  <FormField
-                    control={form.control}
-                    name="categoria_id"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Categoria</FormLabel>
-                        <Popover
-                          open={popoverOpen}
-                          onOpenChange={setPopoverOpen}
-                        >
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                className={cn(
-                                  "w-full justify-between",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value
-                                  ? categoria.find(
-                                      (empresa: any) =>
-                                        empresa.id === field.value
-                                    )?.nome
-                                  : "Selecione categoria"}
-                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-full p-0">
-                            <Command className="pointer-events-auto">
-                              <CommandInput
-                                className="pointer-events-auto z-[999999999]"
-                                placeholder="Pesquise..."
-                              />
-                              <CommandEmpty>Nada encontrado.</CommandEmpty>
-                              <CommandGroup>
-                                {categoria.map((CL: any) => (
-                                  <CommandItem
-                                    value={CL.nome}
-                                    key={CL.id}
-                                    onSelect={() => {
-                                      form.setValue("categoria_id", CL.id);
-                                      setPopoverOpen(false);
-                                    }}
-                                  >
-                                    <CheckIcon
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        CL.nome === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {CL.nome}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="categoria_id"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Categorias</FormLabel>
+                      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-full justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? categoria.find(
+                                    (empresa: any) => empresa.id === field.value
+                                  )?.nome ||
+                                  categoria.nome ||
+                                  "Selecione categoria"
+                                : "Selecione categoria"}
+
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command className="pointer-events-auto">
+                            <CommandInput
+                              className="pointer-events-auto z-[999999999]"
+                              placeholder="Pesquise..."
+                            />
+                            <CommandEmpty>Nada encontrado.</CommandEmpty>
+                            <CommandGroup>
+                              {categoria.map((CL: any) => (
+                                <CommandItem
+                                  value={CL.nome}
+                                  key={CL.id}
+                                  onSelect={() => {
+                                    form.setValue("categoria_id", CL.id);
+                                    setPopoverOpen(false);
+                                  }}
+                                >
+                                  <CheckIcon
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      CL.nome === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {CL.nome}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               </div>
             </div>
           </Form>

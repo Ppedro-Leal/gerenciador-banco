@@ -3,9 +3,13 @@ export default interface TiposProduto {
     nome: string;
     descricao?: string | undefined;
     preco: string;
-    imagem?: string | undefined;
+    imagem?: {
+      url: string | undefined
+    }
     disponibilidade: boolean;
-    categoria_id: string;
+    categoria_id: {
+      nome: string;
+    }
     crud: "CRT" | "UPD";
     onclikCancela: any;
   }

@@ -68,7 +68,12 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-    const produto = await prisma.produto.findMany();
+    const produto = await prisma.produto.findMany({
+      include: {
+        imagem: true,
+        categoria: true
+      }
+    });
     return NextResponse.json(produto);
 }
 

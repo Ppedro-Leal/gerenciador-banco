@@ -400,8 +400,8 @@ export default function Admin() {
                   descricao={produtoEdicao?.descricao}
                   preco={produtoEdicao?.preco}
                   categoria_id={
-                    produtoEdicao.categoria_id && {
-                      nome: produtoEdicao.categoria_id.nome,
+                    produtoEdicao.categoria && {
+                      nome: produtoEdicao.categoria.nome,
                     }
                   }
                   disponibilidade={produtoEdicao?.disponibilidade}
@@ -431,7 +431,7 @@ export default function Admin() {
                         <TableCell>{s.nome}</TableCell>
                         <TableCell>{s.preco}</TableCell>
                         <TableCell>{s.disponibilidade == true ? "Disponivel" : "Indisponivel"}</TableCell>
-                        <TableCell>{s.categoria_id}</TableCell>
+                        <TableCell>{s.categoria.nome}</TableCell>
                         <TableCell className="flex flex-row space-x-3">
                           <Pencil1Icon
                             className=" w-10 h-6 cursor-pointer"
