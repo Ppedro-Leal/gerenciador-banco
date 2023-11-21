@@ -11,6 +11,8 @@ model Categoria {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   nome String
 
+
+  imagem    Imagem[]
   produtos Produto[]
 }
 
@@ -40,6 +42,9 @@ model Imagem {
 
   produto Produto?   @relation(fields: [produto_id], references: [id])
   produto_id String? @db.ObjectId
+
+  categoria Categoria?   @relation(fields: [categoria_id], references: [id])
+  categoria_id String? @db.ObjectId
 }
 
 model Pedido {

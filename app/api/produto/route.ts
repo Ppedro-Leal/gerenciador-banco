@@ -34,7 +34,7 @@ export async function POST(request: Request) {
      ? mime.extension(imagem.type) || extname(imagem.name) || 'png'
      : 'png'; 
 
-   const nomeArquivo = `imagem_${idUnico}.${extensao}`;
+     const nomeArquivo = `imagem_${idUnico}.${extensao}`;
 
       const caminhoAbsoluto = resolve('public/uploads', nomeArquivo);
     

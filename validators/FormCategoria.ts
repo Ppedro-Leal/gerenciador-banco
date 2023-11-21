@@ -2,6 +2,7 @@ import {z} from 'zod';
 
 export const CategoriaSchema = z.object({
     id: z.string(),
-    nome: z.string().nonempty({message: 'tatatsaas'})
+    imagem: z.unknown().optional(),
+    nome: z.string()
 })
 

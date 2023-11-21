@@ -1,10 +1,11 @@
 import prisma from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { createReadStream, createWriteStream } from 'fs';
-import { resolve } from 'path';
+import { extname, resolve } from 'path';
 import { pipeline } from 'stream/promises';
 import { v4 as uuidv4 } from 'uuid';
 import { PassThrough } from "stream";
+import  mime  from 'mime-types';
 
 export async function POST(request: Request) {
   try {
@@ -28,7 +29,11 @@ export async function POST(request: Request) {
       const imagemBuffer = await (imagem as Blob).arrayBuffer();
       
       const idUnico = uuidv4();
-      const nomeArquivo = `imagem_${idUnico}.jpg`; 
+      const extensao = typeof imagem === 'object' && 'type' in imagem
+      ? mime.extension(imagem.type) || extname(imagem.name) || 'png'
+      : 'png'; 
+ 
+    const nomeArquivo = `imagem_${idUnico}.${extensao}`;
       
       const caminhoAbsoluto = resolve('public/uploads', nomeArquivo);
     
